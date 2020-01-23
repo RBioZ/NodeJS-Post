@@ -17,7 +17,9 @@ const Post = require('./models/Posts')
 //Rotas
 
     app.get('/',function(req,res){
-        res.render('home')
+        Post.findAll().then(function(posts){
+            res.render('home',{posts: posts})
+        })
     })
 
     app.get('/cad',function(req,res){
@@ -30,13 +32,22 @@ const Post = require('./models/Posts')
             titulo: req.body.titulo,
             conteudo: req.body.conteudo
         }).then(function(){
-            res.send("POST CRIADO COM SUCESSO!")
+            res.redirect('/')
         }).catch(function(erro){
             res.send("Houve um erro:"+erro)
         })
 
         //res.send("Titulo: "+req.body.titulo+" Conteudo: "+req.body.conteudo)
     })
+
+    app.get('/del/:id',function(req,res){
+        Post.destroy({where:{'id': req.params.id}}).then(function(){
+            res.send("Postagem deletada com sucesso")
+        }).catch(function(erro){
+            res.send("Erro ")
+        })
+    })
+
 
 app.listen(8081,function(){
     console.log("Servidor Rodando na URL localhost:8081");
